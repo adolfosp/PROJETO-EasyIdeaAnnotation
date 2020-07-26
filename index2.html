@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+      integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <style>
+      body,
+      .jumbotron {
+        padding: 30px;
+      }
+      body {
+        background-color: crimson;
+        background-size: cover;
+      }
+      .content {
+        font-size: 19px;
+        line-height: 1.5;
+        max-width: 500px;
+        margin: 0 auto;
+        position: relative;
+        border-radius: 5px;
+      }
+      /* o elemento pai e o input */
+      .floater {
+        background: #fff;
+        transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.4) all;
+        margin-bottom: 30px;
+        z-index: 11;
+      }
+      .floater input[type="text"] {
+        padding: 30px 20px;
+        border: none;
+        box-shadow: none;
+        font-size: 14px;
+        transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.4) all;
+      }
+      /* o elemento pai e o input */
+
+      .floater-bottom {
+        padding: 6px 10px 8px;
+        text-align: right;
+        border-top: 1px solid #ddd;
+      }
+      .floater-bottom button {
+        padding: 4px 8px;
+        font-size: 10px;
+      }
+
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.8);
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: 0.3s ease opacity;
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      body.show-floater .floater {
+        transform: scale(1.1);
+      }
+      body.show-floater .floater input[type="text"] {
+        padding: 50px 20px;
+        font-size: 18px;
+      }
+      body.show-floater .overlay {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      /* css responsável pelo card inseridos */
+
+      .bookmarks-list {
+        position: relative;
+        z-index: 9;
+      }
+      .bookmark {
+        display: flex;
+        background: #fff;
+        position: relative;
+
+        color: #999;
+        padding: 20px;
+        transition: 0.3s ease all;
+        border-bottom: 1px solid #ddd;
+        font-size: 16px;
+      }
+      .bookmark:hover {
+        color: #1ce;
+        text-decoration: none;
+      }
+      .bookmark:first-child {
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+      }
+      .bookmark:last-child {
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        border-bottom: 0;
+      }
+
+      .bookmark .img {
+        background-color: #ddd;
+        border-radius: 3px;
+        background-image: url("https://pbs.twimg.com/profile_images/804421640465580032/aG7EyewO_400x400.jpg");
+        background-size: cover;
+        width: 80px;
+        height: 60px;
+        margin-right: 20px;
+      }
+      .bookmark .title {
+        display: flex;
+        align-items: center;
+      }
+      .bookmark .glyphicon-remove {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: #eee;
+        font-size: 12px;
+        transition: 0.3s ease color;
+        cursor: pointer;
+      }
+      .bookmark:hover .glyphicon-remove {
+        color: #aaa;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="overlay"></div>
+    <div class="floater content">
+      <form class="bookmark-form">
+        <div class="floater-top">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Tell me &#128526, What are your ideas &#10067;"
+          />
+        </div>
+        <div class="floater-bottom">
+          <button type="submit" class="btn btn-primary btn-sm">Add</button>
+        </div>
+      </form>
+    </div>
+    <div class="modal fade" id="myModal" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Aviso!</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+          </div>
+          <div class="modal-body">
+            <p>Digite algum valor para poder modificar.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    
+    <div class="bookmarks-list content"></div>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+      integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+      integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const body = document.body;
+      const input = document.querySelector("input[type=text]");
+      const overlay = document.querySelector(".overlay");
+      const mdMensagem = document.querySelector("#mensagem");
+
+      function showFloater() {
+        body.classList.add("show-floater");
+      }
+      function closeFloater() {
+        if (body.classList.contains("show-floater")) {
+          body.classList.remove("show-floater");
+        }
+      }
+
+      input.addEventListener("focusin", showFloater);
+      input.addEventListener("focusout", closeFloater);
+      overlay.addEventListener("click", closeFloater);
+      // =========================
+
+      const bookmarksList = document.querySelector(".bookmarks-list");
+      const bookmarkForm = document.querySelector(".bookmark-form");
+      const bookmarkInput = bookmarkForm.querySelector("input[type=text]");
+      const bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
+
+      fillBookmarksList(bookmarks);
+
+      function createBookmark(e) {
+        e.preventDefault();
+
+        const title = bookmarkInput.value;
+        const img = "img.jpg";
+        const bookmark = {
+          title: title,
+          img: img,
+        };
+
+        bookmarks.push(bookmark);
+        fillBookmarksList(bookmarks);
+        storeBookmarks(bookmarks);
+
+        bookmarkForm.reset();
+        console.table(bookmarks);
+      }
+
+      function fillBookmarksList(bookmarks = []) {
+        const bookmarksHtml = bookmarks
+          .map((bookmark, i) => {
+            return `
+          <ul href="#" class="bookmark" data-id="${i}">
+              <img src="${bookmark.img}" class="img"/>
+              <div class="title">${bookmark.title}</div>
+              <span class="glyphicon glyphicon-remove fa fa-times" aria-hidden="true"></span>
+            </ul>
+          `;
+          })
+          .join("");
+        bookmarksList.innerHTML = bookmarksHtml;
+      }
+      function removeBookmark(e) {
+        if (!e.target.matches(".glyphicon-remove")) return;
+
+        console.log(e.target.matches(".glyphicon-remove"));
+        const index = e.target.parentNode.dataset.id;
+        bookmarks.splice(index, 1);
+        fillBookmarksList(bookmarks);
+        storeBookmarks(bookmarks);
+      }
+
+      function AlterarValor(e) {
+        if (!e.target.matches(".title")) return;
+
+        const index = e.target.parentNode.dataset.id;
+        //var campoIndex = document.querySelector(`[data-id="${index}"]`);
+
+        const titleUpdate = bookmarkInput.value;
+        console.log(titleUpdate);
+        if (titleUpdate !== "") {
+          bookmarks[index].title = titleUpdate;
+          storeBookmarks(bookmarks);
+          document.location.reload(true);
+
+          console.log(bookmarks[index].title);
+        } else {
+            $("#myModal").modal();
+     
+        }
+      }
+
+      function storeBookmarks(bookmarks = []) {
+        localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+      }
+      bookmarksList.addEventListener("click", removeBookmark);
+      bookmarksList.addEventListener("click", AlterarValor);
+      bookmarkForm.addEventListener("submit", createBookmark);
+    </script>
+  </body>
+</html>
