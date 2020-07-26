@@ -197,6 +197,18 @@
           if (e.keyCode === 27) 
             closeFloater();
       }); 
+      function letraMaius(text) {
+          var words = text.toLowerCase().split(" ");
+          //O método split() divide um objeto String em um array de strings ao separar a string em substrings.
+          var w = words[0];
+          //pego a primeira palavra do array
+          words[0] = w[0].toUpperCase() + w.slice(1);
+                     //pego a primeira letra dessa palavra e deixo ela em maiuscula e com o metodo slice(1) eu retiro a primeira letra que está minuscula e concateno com a primeira letra que fico grande
+
+          return words.join(" ");
+          //depois junto tudo
+      }
+
       const body = document.body;
       const input = document.querySelector("input[type=text]");
       const overlay = document.querySelector(".overlay");
@@ -227,9 +239,11 @@
         e.preventDefault();
 
         const title = bookmarkInput.value;
+       
+        const titleMaius = letraMaius(title);
         const img = "img.jpg";
         const bookmark = {
-          title: title,
+          title: titleMaius,
           img: img,
         };
 
